@@ -1,0 +1,400 @@
+<!DOCTYPE html><html lang="zh" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>信息安全管理与评估应急响应 | SystemのBlog</title><meta name="author" content="System"><meta name="copyright" content="System"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="什么是应急响应应急响应,指的是在应对突发事件或危机情况时采取的及时有效措施,以控制和减轻事件带来的影响,保障安全。 在检测到网络安全事件（如黑客攻击、数据泄露、系统入侵等）后，组织采取的一系列预定义的行动和程序，以最小化损失和影响，恢复正常运营，并防止未来的安全威胁。 目录 0x01：Windows入侵排查 0x02：Linux入侵排查 0x03：Windows日志分析 0x04：Web日志分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="信息安全管理与评估应急响应">
+<meta property="og:url" content="http://yaisystem.github.io/2024/08/09/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E4%B8%8E%E8%AF%84%E4%BC%B0-%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/index.html">
+<meta property="og:site_name" content="SystemのBlog">
+<meta property="og:description" content="什么是应急响应应急响应,指的是在应对突发事件或危机情况时采取的及时有效措施,以控制和减轻事件带来的影响,保障安全。 在检测到网络安全事件（如黑客攻击、数据泄露、系统入侵等）后，组织采取的一系列预定义的行动和程序，以最小化损失和影响，恢复正常运营，并防止未来的安全威胁。 目录 0x01：Windows入侵排查 0x02：Linux入侵排查 0x03：Windows日志分析 0x04：Web日志分析">
+<meta property="og:locale">
+<meta property="og:image" content="http://yaisystem.github.io/img/favicon.jpg">
+<meta property="article:published_time" content="2024-08-09T03:29:44.667Z">
+<meta property="article:modified_time" content="2024-08-09T03:32:20.932Z">
+<meta property="article:author" content="System">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yaisystem.github.io/img/favicon.jpg"><link rel="shortcut icon" href="/img/favicon.jpg"><link rel="canonical" href="http://yaisystem.github.io/2024/08/09/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E4%B8%8E%E8%AF%84%E4%BC%B0-%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: {"limitDay":500,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Error',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"You have switched to Traditional Chinese","cht_to_chs":"You have switched to Simplified Chinese","day_to_night":"You have switched to Dark Mode","night_to_day":"You have switched to Light Mode","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"top-right"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '信息安全管理与评估应急响应',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-08-09 11:32:20'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.3.0"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+document.addEventListener('pjax:send', () => {
+  Pace.restart()
+})
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/favicon.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">2</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/wallhaven.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="SystemのBlog"><span class="site-name">SystemのBlog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 列表</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">信息安全管理与评估应急响应</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2024-08-09T03:29:44.667Z" title="Created 2024-08-09 11:29:44">2024-08-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2024-08-09T03:32:20.932Z" title="Updated 2024-08-09 11:32:20">2024-08-09</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="信息安全管理与评估应急响应"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="什么是应急响应"><a href="#什么是应急响应" class="headerlink" title="什么是应急响应"></a>什么是应急响应</h2><p>应急响应,指的是在应对突发事件或危机情况时采取的及时有效措施,以控制和减轻事件带来的影响,保障安全。</p>
+<p>在检测到网络安全事件（如黑客攻击、数据泄露、系统入侵等）后，组织采取的一系列预定义的行动和程序，以最小化损失和影响，恢复正常运营，并防止未来的安全威胁。</p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li>0x01：Windows入侵排查</li>
+<li>0x02：Linux入侵排查</li>
+<li>0x03：Windows日志分析</li>
+<li>0x04：Web日志分析</li>
+<li>0x05：MySQL日志分析</li>
+</ul>
+<hr>
+
+<h2 id="0x01：Windows入侵排查"><a href="#0x01：Windows入侵排查" class="headerlink" title="0x01：Windows入侵排查"></a>0x01：Windows入侵排查</h2><h4 id="1-1、查看服务器中是否存在可疑用户或者新增用户。"><a href="#1-1、查看服务器中是否存在可疑用户或者新增用户。" class="headerlink" title="1.1、查看服务器中是否存在可疑用户或者新增用户。"></a>1.1、查看服务器中是否存在可疑用户或者新增用户。</h4><blockquote>
+<p>检查方法：Win+R -&gt; 输入【<strong>lusrmgr.msc</strong>】命令，查看是否存在可疑账户，如果Administrators的管理员组当中存在可疑用户，提交或者删除。</p>
+</blockquote>
+<h4 id="1-2、是否存在隐藏账号。"><a href="#1-2、是否存在隐藏账号。" class="headerlink" title="1.2、是否存在隐藏账号。"></a>1.2、是否存在隐藏账号。</h4><blockquote>
+<p>①、打开注册表，查看管理员对应键值</p>
+<p>!(C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505093747808.png)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240809112845875.png" alt="image-20240809112845875"></p>
+</blockquote>
+<h4 id="1-3、通过日志查看管理员登录时间、用户名和IP是否异常。"><a href="#1-3、通过日志查看管理员登录时间、用户名和IP是否异常。" class="headerlink" title="1.3、通过日志查看管理员登录时间、用户名和IP是否异常。"></a>1.3、通过日志查看管理员登录时间、用户名和IP是否异常。</h4><blockquote>
+<p>①、Win+R 打开运行，输入“<strong>eventvwr.msc</strong>”，打开“事件查看器”。</p>
+<p>②、直接按下 Win键 ，搜索“事件查看器”。（系统版本可能存在不同）</p>
+<p>③、通过Windows常用事件ID筛选题目或者想要查询的日志类型和具体内容。（常见Windows事件ID详情<strong>0x03</strong>。）</p>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505093308297.png" style="zoom:150%;" />
+</blockquote>
+<h4 id="1-4、查看异常的端口、进程和可疑IP及连接。"><a href="#1-4、查看异常的端口、进程和可疑IP及连接。" class="headerlink" title="1.4、查看异常的端口、进程和可疑IP及连接。"></a>1.4、查看异常的端口、进程和可疑IP及连接。</h4><blockquote>
+<p><strong>netstat -ano</strong> 查看目前的网络连接情况，找到可疑的<strong>ESTABLISHED</strong>以及<strong>PID</strong></p>
+<p>!(C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505094209992.png)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240809112602841.png" alt="image-20240809112602841"></p>
+</blockquote>
+<h4 id="1-5、检查系统启动项、计划任务和服务"><a href="#1-5、检查系统启动项、计划任务和服务" class="headerlink" title="1.5、检查系统启动项、计划任务和服务"></a>1.5、检查系统启动项、计划任务和服务</h4><blockquote>
+<p>①、启动项</p>
+<p>a、单击【开始】-&gt; 【所有程序】-&gt; 【启动】，默认情况下这里面是一个空目录，确认是否有非正常的程序或者脚本在该目录下存在。</p>
+<p>b、【C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup】此路径同上</p>
+<p>c、按住win+R 输入【<strong>shell:startup</strong>】，即可调出<strong>启动</strong>目录</p>
+<p>!(C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505095155429.png)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240809112648716.png" alt="image-20240809112648716"></p>
+<p>d、按住 win+R 输入【<strong>msconfig</strong>】，查看是否存在命名异常的启动项。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505095432898.png" alt="image-20240505095432898"></p>
+<p>e、按住 Win+R 输入【<strong>regedit</strong>】，打开注册表查看以下三个注册表项，验证开机启动项是否正常。</p>
+<p>HKEY_CURRENT_USER\software\micorsoft\windows\currentversion\run </p>
+<p>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run</p>
+<p>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Runonce</p>
+<p>f、按住 Win+R 输入【gpedit.msc】，打开组策略（win11无法用这个命令打开）检查是否有脚本自启动。</p>
+<p>②、计划任务</p>
+<p>a、打开【控制面板】-&gt; 【Windows工具】-&gt;【任务计划】,查看木马后门的文件路径，对其进一步查杀。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505100625827.png" alt="image-20240505100625827"></p>
+<p>b、【<strong>CMD</strong>】-&gt; 输入【<strong>at</strong>】(win11已经弃用<strong>at</strong>命令，使用<strong>schtasks.exe</strong>命令，原理相同)，检查计算机与网络上其他计算机之间的会话或者计划任务。</p>
+<p>!(C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505101018631.png)</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240809112738350.png" alt="image-20240809112738350"></p>
+<p>③、服务自启动</p>
+<p>a、按住Win+R 输入 【<strong>services.msc</strong>】注意服务状态和启动类型，检查是否异常。</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505101215321.png" alt="image-20240505101215321"></p>
+</blockquote>
+<hr>
+
+<h2 id="0x02：Linux入侵排查"><a href="#0x02：Linux入侵排查" class="headerlink" title="0x02：Linux入侵排查"></a>0x02：Linux入侵排查</h2><h4 id="2-1-账号安全"><a href="#2-1-账号安全" class="headerlink" title="2.1 账号安全"></a>2.1 账号安全</h4><blockquote>
+<p>1.用户信息文件：&#x2F;etc&#x2F;passwd</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505102550752.png" alt="image-20240505102550752"></p>
+<p>用户名：密码：用户ID：组ID：用户说明：家目录</p>
+<p>注意：无密码只允许本机登录，不能远程登录。</p>
+<p>2.影子文件：&#x2F;etc&#x2F;shadow</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505102900161.png" alt="image-20240505102900161"></p>
+<p>用户名：加密密码：密码最后一次修改日期：两次密码的修改时间间隔：密码有效期：密码修改到期到的警告天数：密码过期之 后的宽限天数：账号失效时间：保留</p>
+</blockquote>
+<h4 id="2-2-入侵排查"><a href="#2-2-入侵排查" class="headerlink" title="2.2 入侵排查"></a>2.2 入侵排查</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">①、通过history命令查看此账号执行过的系统命令，根据命令判断此账号进行了什么行为。</span><br><span class="line">②、查看异常端口</span><br><span class="line">	netstat -antlp|more</span><br><span class="line">查看PID所对应的进程文件路径</span><br><span class="line">③、使用ps命名，分析进程：</span><br><span class="line">	ps -aux|grep pid</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-3-开机启动配置文件"><a href="#2-3-开机启动配置文件" class="headerlink" title="2.3 开机启动配置文件"></a>2.3 开机启动配置文件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/etc/rc.local</span><br><span class="line">/etc/rc.d/rc[0-6].d</span><br></pre></td></tr></table></figure>
+
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505104111803.png" alt="image-20240505104111803"  />
+
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505104152063.png" alt="image-20240505104152063"></p>
+<h4 id="2-4-排查定时任务"><a href="#2-4-排查定时任务" class="headerlink" title="2.4 排查定时任务"></a>2.4 排查定时任务</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1、crontab</span><br><span class="line">	crontab -l 列出某个用户cront服务的详细内容</span><br><span class="line">	crontab -r 删除每个用户cront任务</span><br><span class="line">	crontab -e 编辑当前的crontab文件</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">重点关注以下目录是否存在恶意脚本</span><br><span class="line"></span><br><span class="line">/var/spool/cron/*</span><br><span class="line">/etc/crontab</span><br><span class="line">/etc/cron.d/*</span><br><span class="line">/etc/cron.daily/*</span><br><span class="line">/etc/cron.hourly/*</span><br><span class="line">/etc/cron.monthly/*</span><br><span class="line">/etc/cron.weekly/</span><br><span class="line">/etc/anacrontab</span><br><span class="line">/var/spool/anacron/*</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-5-排查系统日志"><a href="#2-5-排查系统日志" class="headerlink" title="2.5 排查系统日志"></a>2.5 排查系统日志</h4><p>日志默认存放位置：&#x2F;var&#x2F;log&#x2F;</p>
+<p>查看日志配置情况：cat &#x2F;etc&#x2F;rsyslog.conf</p>
+<table>
+<thead>
+<tr>
+<th align="center">日志文件路径</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;secure</td>
+<td align="center">记录验证和授权方面的信息，只要涉及账号和密码的程序都会记录，比如SSH登录，su切换 用户，sudo授权，甚至添加用户和修改用户密码都会记录在这个日志文件中</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;cron</td>
+<td align="center">记录了系统定时任务相关的日志</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;cups</td>
+<td align="center">记录打印信息的日志</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;dmesg</td>
+<td align="center">记录了系统在开机时内核自检的信息，也可以使用dmesg命令直接查看内核自检信息</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;mailog</td>
+<td align="center">记录邮件信息</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;message</td>
+<td align="center">记录系统重要信息的日志。这个日志文件中会记录Linux系统的绝大多数重要信息，如果系 统出现问题时，首先要检查的就应该是这个日志文件</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;btmp</td>
+<td align="center">记录错误登录日志，这个文件是二进制文件，不能直接vi查看，而要使用lastb命令查看</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;lastlog</td>
+<td align="center">记录系统中所有用户最后一次登录时间的日志，这个文件是二进制文件，不能直接vi，而要 使用lastlog命令查看</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;wtmp</td>
+<td align="center">永久记录所有用户的登录、注销信息，同时记录系统的启动、重启、关机事件。同样这个文 件也是一个二进制文件，不能直接vi，而需要使用last命令来查看</td>
+</tr>
+<tr>
+<td align="center">&#x2F;var&#x2F;log&#x2F;utmp</td>
+<td align="center">记录当前已经登录的用户信息，这个文件会随着用户的登录和注销不断变化，只记录当前登 录用户的信息。同样这个文件不能直接vi，而要使用w,who,users等命令来查询</td>
+</tr>
+</tbody></table>
+<h4 id="2-6-日志分析小技巧"><a href="#2-6-日志分析小技巧" class="headerlink" title="2.6 日志分析小技巧"></a>2.6 日志分析小技巧</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">awk 命令</span><br><span class="line">grep 命令</span><br><span class="line">sed 命令</span><br><span class="line">find 命令</span><br><span class="line">sort 命令</span><br><span class="line">uniq 命令</span><br><span class="line">top 命令</span><br><span class="line">last 命令</span><br><span class="line">xargs 命令</span><br><span class="line">netstat 命令</span><br><span class="line">more 命令</span><br><span class="line">diff 命令</span><br><span class="line"></span><br><span class="line">***// 以上Linux常用命令的所有语法及用法必须完全记住</span><br></pre></td></tr></table></figure>
+
+<hr>
+
+<h2 id="0x03：Windows日志分析"><a href="#0x03：Windows日志分析" class="headerlink" title="0x03：Windows日志分析"></a>0x03：Windows日志分析</h2><p>上述0x01当中已经讲过Windows的日志所在路径和方法，这次不再过多赘述</p>
+<p>对于不同的Windows日志分析，有着不同的事件ID，下面是一些常见的事件ID ,也是2024年省赛用到的一些事件ID。</p>
+<table>
+<thead>
+<tr>
+<th align="center">事件ID</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">4624</td>
+<td align="center">登录成功</td>
+</tr>
+<tr>
+<td align="center">4625</td>
+<td align="center">登录失败</td>
+</tr>
+<tr>
+<td align="center">4634</td>
+<td align="center">注销成功</td>
+</tr>
+<tr>
+<td align="center">4647</td>
+<td align="center">用户启动的注销</td>
+</tr>
+<tr>
+<td align="center">4672</td>
+<td align="center">使用管理员进行登录</td>
+</tr>
+<tr>
+<td align="center">4720</td>
+<td align="center">创建用户</td>
+</tr>
+</tbody></table>
+<p>此外还有很多事件ID，这里不再一一描述，遇到之后去百度搜索就可以。</p>
+<blockquote>
+<p>可以利用eventlog事件来查看系统账号登录情况：</p>
+<ol>
+<li><p>在“开始”菜单上，依次指向“所有程序”、“管理工具”，然后单击“事件查看器”；</p>
+</li>
+<li><p>在事件查看器中，单击“安全”，查看安全日志；</p>
+</li>
+<li><p>在安全日志右侧操作中，点击“筛选当前日志”，输入事件ID进行筛选。 </p>
+<p>4624 –登录成功 </p>
+<p>4625 –登录失败 </p>
+<p>4634 – 注销成功 </p>
+<p>4647 – 用户启动的注销 </p>
+<p>4672 – 使用超级用户（如管理员）进行登录</p>
+<p> 我们输入事件ID：4625进行日志筛选，发现事件ID：4625，事件数175904，即用户登录失败了175904次，那么这台服务器管理员账号可能遭遇了暴力猜解。</p>
+</li>
+</ol>
+</blockquote>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240505112222409.png" alt="image-20240505112222409"></p>
+<hr>
+
+<h2 id="0x04：Web日志分析"><a href="#0x04：Web日志分析" class="headerlink" title="0x04：Web日志分析"></a>0x04：Web日志分析</h2><p>常见的中间件：Apache、Nginx、Tomcat、IIS、Weblogic</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="C:\Users\刘华\AppData\Roaming\Typora\typora-user-images\image-20240508093425475.png" alt="image-20240508093425475"></p>
+<p>这是一条Apache的访问日志，这里可以清楚的看到访问者的IP地址，访问事件，请求方式GET&#x2F;POST，访问时所用的操作系统和浏览器的内核版本，以及访问的哪个页面和回显是否正常等。</p>
+<p>Linux下，可以配合Shell+Linux命令实现日志分析：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1、列出日志当中访问次数最多的IP：</span><br><span class="line">cat log_file |awk &#x27;&#123;print($1)&#125;&#x27; |uniq -c |sor      //详细可以去看一看awk，uniq，sort命令的详细用法</span><br><span class="line">仅提供排查思路，命令的用法自己发挥</span><br><span class="line">2、列出日志当中成功访问的记录：</span><br><span class="line">cat log_file |grep 200</span><br><span class="line">3、列出日志当中成功被hacker上传的后门记录：</span><br><span class="line">cat log_file |grep 200 |grep POST</span><br></pre></td></tr></table></figure>
+
+<p>应急响应中身为蓝队人员要做好防护职责，最好的防护思路就是读懂红队人员的攻击思路和攻击手段，用反方向的思维去做好防护。  <strong>—仅个人理解</strong>，简单点就是<strong>“知攻善防”</strong></p>
+<p><strong>所有中间件的日志都默认存放在不同的路径下，这里需要你个人积累。</strong></p>
+<hr>
+
+<h2 id="0x05：MySQL日志分析"><a href="#0x05：MySQL日志分析" class="headerlink" title="0x05：MySQL日志分析"></a>0x05：MySQL日志分析</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1、查看log配置信息：</span><br><span class="line">show variables like &#x27;%general%&#x27;;</span><br><span class="line">2、开启日志：</span><br><span class="line">SET GLOBAL general_log=&#x27;On&#x27;;</span><br><span class="line">3、指定日志文件路径：</span><br><span class="line">#SET GLOBAL general_log_file=&#x27;/var/lib/mysql/mysql.log&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>例如：当访问&#x2F;Demo.php?id&#x3D;1,此时得到这样的日志：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">240501 10:01:20          14 Connect    root@localhost on</span><br><span class="line">            20  Init DB      Demo</span><br><span class="line">            20  Query        SELECT * FROM admin WHERE id=1</span><br><span class="line">            20  Quit</span><br></pre></td></tr></table></figure>
+
+<p>日志解读：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">第一列：时间列，前面是日期，后面是小时和分钟，另外有些sql语句几乎是同时执行，所以就不会另外再记录时间。</span><br><span class="line">第二列：ID，就是show processlist出来的第一列的线程ID。</span><br><span class="line">第三列：Command，操作类型，比如：Connect就是连接数据库，Query就是查询数据库（增删改查都显示为查询）。</span><br><span class="line">第四列：Argument，详细信息，比如root@localhost on就是连接数据库，以此类推，下面就是连接数据库之后做了什么操作。</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="http://YaiSystem.github.io">System</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="http://yaisystem.github.io/2024/08/09/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E4%B8%8E%E8%AF%84%E4%BC%B0-%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/">http://yaisystem.github.io/2024/08/09/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E4%B8%8E%E8%AF%84%E4%BC%B0-%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/favicon.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>Sponsor</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/wechat.jpg" alt="wechat"/></a><div class="post-qr-code-desc">wechat</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2024/08/08/hello-world/" title="Hello World"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">Next</div><div class="next_info">Hello World</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/favicon.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">System</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">2</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">0</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/YaiSystem"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/YaiSystem" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:System1022@126.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is System Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94"><span class="toc-number">1.</span> <span class="toc-text">什么是应急响应</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-number">2.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01%EF%BC%9AWindows%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5"><span class="toc-number">3.</span> <span class="toc-text">0x01：Windows入侵排查</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1%E3%80%81%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%AD%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E5%8F%AF%E7%96%91%E7%94%A8%E6%88%B7%E6%88%96%E8%80%85%E6%96%B0%E5%A2%9E%E7%94%A8%E6%88%B7%E3%80%82"><span class="toc-number">3.0.1.</span> <span class="toc-text">1.1、查看服务器中是否存在可疑用户或者新增用户。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2%E3%80%81%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E9%9A%90%E8%97%8F%E8%B4%A6%E5%8F%B7%E3%80%82"><span class="toc-number">3.0.2.</span> <span class="toc-text">1.2、是否存在隐藏账号。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3%E3%80%81%E9%80%9A%E8%BF%87%E6%97%A5%E5%BF%97%E6%9F%A5%E7%9C%8B%E7%AE%A1%E7%90%86%E5%91%98%E7%99%BB%E5%BD%95%E6%97%B6%E9%97%B4%E3%80%81%E7%94%A8%E6%88%B7%E5%90%8D%E5%92%8CIP%E6%98%AF%E5%90%A6%E5%BC%82%E5%B8%B8%E3%80%82"><span class="toc-number">3.0.3.</span> <span class="toc-text">1.3、通过日志查看管理员登录时间、用户名和IP是否异常。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4%E3%80%81%E6%9F%A5%E7%9C%8B%E5%BC%82%E5%B8%B8%E7%9A%84%E7%AB%AF%E5%8F%A3%E3%80%81%E8%BF%9B%E7%A8%8B%E5%92%8C%E5%8F%AF%E7%96%91IP%E5%8F%8A%E8%BF%9E%E6%8E%A5%E3%80%82"><span class="toc-number">3.0.4.</span> <span class="toc-text">1.4、查看异常的端口、进程和可疑IP及连接。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-5%E3%80%81%E6%A3%80%E6%9F%A5%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E9%A1%B9%E3%80%81%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1%E5%92%8C%E6%9C%8D%E5%8A%A1"><span class="toc-number">3.0.5.</span> <span class="toc-text">1.5、检查系统启动项、计划任务和服务</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02%EF%BC%9ALinux%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5"><span class="toc-number">4.</span> <span class="toc-text">0x02：Linux入侵排查</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-%E8%B4%A6%E5%8F%B7%E5%AE%89%E5%85%A8"><span class="toc-number">4.0.1.</span> <span class="toc-text">2.1 账号安全</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5"><span class="toc-number">4.0.2.</span> <span class="toc-text">2.2 入侵排查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">4.0.3.</span> <span class="toc-text">2.3 开机启动配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-%E6%8E%92%E6%9F%A5%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="toc-number">4.0.4.</span> <span class="toc-text">2.4 排查定时任务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-%E6%8E%92%E6%9F%A5%E7%B3%BB%E7%BB%9F%E6%97%A5%E5%BF%97"><span class="toc-number">4.0.5.</span> <span class="toc-text">2.5 排查系统日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E5%B0%8F%E6%8A%80%E5%B7%A7"><span class="toc-number">4.0.6.</span> <span class="toc-text">2.6 日志分析小技巧</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03%EF%BC%9AWindows%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="toc-number">5.</span> <span class="toc-text">0x03：Windows日志分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04%EF%BC%9AWeb%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="toc-number">6.</span> <span class="toc-text">0x04：Web日志分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x05%EF%BC%9AMySQL%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="toc-number">7.</span> <span class="toc-text">0x05：MySQL日志分析</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/09/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E4%B8%8E%E8%AF%84%E4%BC%B0-%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94/" title="信息安全管理与评估应急响应">信息安全管理与评估应急响应</a><time datetime="2024-08-09T03:29:44.667Z" title="Created 2024-08-09 11:29:44">2024-08-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/08/08/hello-world/" title="Hello World">Hello World</a><time datetime="2024-08-08T13:55:37.267Z" title="Created 2024-08-08 21:55:37">2024-08-08</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('/img/wallhaven.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2024 By System</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="Toggle Between Traditional Chinese And Simplified Chinese">繁</button><button id="darkmode" type="button" title="Toggle Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="chat-btn" type="button" title="Chat"><i class="fas fa-sms"></i></button><button id="go-up" type="button" title="Back To Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="/js/tw_cn.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><script>(() => {
+  const abcjsInit = () => {
+    const abcjsFn = () => {
+      document.querySelectorAll(".abc-music-sheet").forEach(ele => {
+        ABCJS.renderAbc(ele, ele.innerHTML, {responsive: 'resize'})
+      })
+    }
+    
+    typeof ABCJS === 'object' ? abcjsFn()
+      : getScript('https://cdn.jsdelivr.net/npm/abcjs@6.3.0/dist/abcjs-basic-min.min.js').then(abcjsFn)
+  }
+
+  window.pjax ? abcjsInit() : window.addEventListener('load', abcjsInit)
+})()</script></div><div class="aplayer" data-id="6678743774" data-server="netease" data-type="playlist"  data-fixed="true" data-theme="#3F51B5"></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="88" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/click-show-text.min.js" data-mobile="true" data-text="I,LOVE,YOU,SYSTEM" data-fontsize="15px" data-random="true" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading the Database</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
