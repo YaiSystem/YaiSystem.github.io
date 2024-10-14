@@ -12,6 +12,12 @@
       
       
       
+        <tags>
+            
+            <tag> Misc </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -25,33 +31,17 @@
       
       
       
+        <tags>
+            
+            <tag> 应急响应 </tag>
+            
+        </tags>
+      
     </entry>
     
     
   
   
-    
-    
-    <entry>
-      <title></title>
-      <link href="/music/index.html"/>
-      <url>/music/index.html</url>
-      
-        <content type="html"><![CDATA[<!-- #<script>console.error("Error: [hexo-tag-aplayer] Meting support is disabled, cannot resolve the meting tags properly.");</script><div class="aplayer" data-id="8492133976" data-server="netease" data-type="playlist"  data-fixed="true" data-theme="#3F51B5"></#div> --><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=795 height=550 src="//music.163.com/outchain/player?type=0&id=6678743774&auto=1&height=430"></iframe>]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>tags</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
     
     
     <entry>
@@ -71,6 +61,28 @@
       <url>/link/index.html</url>
       
         <content type="html"><![CDATA[<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">title: 友情链接</span><br><span class="line">date： 2024-10-14 15：20：10</span><br><span class="line">type: &#x27;link&#x27;</span><br></pre></td></tr></table></figure>]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>tags</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title></title>
+      <link href="/music/index.html"/>
+      <url>/music/index.html</url>
+      
+        <content type="html"><![CDATA[<!-- #<script>console.error("Error: [hexo-tag-aplayer] Meting support is disabled, cannot resolve the meting tags properly.");</script><div class="aplayer" data-id="8492133976" data-server="netease" data-type="playlist"  data-fixed="true" data-theme="#3F51B5"></#div> --><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=795 height=550 src="//music.163.com/outchain/player?type=0&id=6678743774&auto=1&height=430"></iframe>]]></content>
       
     </entry>
     
