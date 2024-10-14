@@ -68,11 +68,11 @@
     
     
     <entry>
-      <title></title>
+      <title>link</title>
       <link href="/link/index.html"/>
       <url>/link/index.html</url>
       
-        <content type="html"><![CDATA[<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">title: 友情链接</span><br><span class="line">date： 2024-10-14 15：20：10</span><br><span class="line">type: &#x27;link&#x27;</span><br></pre></td></tr></table></figure>]]></content>
+        <content type="html"><![CDATA[]]></content>
       
     </entry>
     
