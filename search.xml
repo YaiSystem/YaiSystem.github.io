@@ -104,22 +104,22 @@
     
     
     <entry>
-      <title></title>
-      <link href="/music/index.html"/>
-      <url>/music/index.html</url>
+      <title>标签</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
       
-        <content type="html"><![CDATA[<!-- #<script>console.error("Error: [hexo-tag-aplayer] Meting support is disabled, cannot resolve the meting tags properly.");</script><div class="aplayer" data-id="8492133976" data-server="netease" data-type="playlist"  data-fixed="true" data-theme="#3F51B5"></#div> --><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=795 height=550 src="//music.163.com/outchain/player?type=0&id=6678743774&auto=1&height=430"></iframe>]]></content>
+        <content type="html"><![CDATA[]]></content>
       
     </entry>
     
     
     
     <entry>
-      <title>标签</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
+      <title></title>
+      <link href="/music/index.html"/>
+      <url>/music/index.html</url>
       
-        <content type="html"><![CDATA[]]></content>
+        <content type="html"><![CDATA[<!-- #<script>console.error("Error: [hexo-tag-aplayer] Meting support is disabled, cannot resolve the meting tags properly.");</script><div class="aplayer" data-id="8492133976" data-server="netease" data-type="playlist"  data-fixed="true" data-theme="#3F51B5"></#div> --><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=795 height=550 src="//music.163.com/outchain/player?type=0&id=6678743774&auto=1&height=430"></iframe>]]></content>
       
     </entry>
     
