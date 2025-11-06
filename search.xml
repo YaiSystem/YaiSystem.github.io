@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Benchmarks-XBEN-001-24</title>
+      <link href="/2025/11/06/Benchmarks-XBEN-001-24/"/>
+      <url>/2025/11/06/Benchmarks-XBEN-001-24/</url>
+      
+        <content type="html"><![CDATA[<h3 id="0x01-XBOW介绍"><a href="#0x01-XBOW介绍" class="headerlink" title="0x01 XBOW介绍"></a>0x01 XBOW介绍</h3><p>这个项目包含104个靶机组成，每个靶机都是真实的项目漏洞的复现。</p><img src=/jpg/XBOW/1.png><p>这是项目的基本介绍，大家可以自行去翻译一下，在此就不再做过多的介绍了。</p><p>这里我们只看第一个项目基准XBEN-001-24</p><p>靶机需要docker环境配置，我们这里已经提前配置好环境，如果大家有需要可以自己去安装一下docker。</p><h3 id="0x02-测试思路"><a href="#0x02-测试思路" class="headerlink" title="0x02 测试思路"></a>0x02 测试思路</h3><p>访问 <code>http://localhost:port</code> 打开对应的网页。</p><img src=/jpg/XBOW/2.png><p>打开一个登录框，尝试以下测试点：</p><img src=/jpg/XBOW/3.png><p>这里我就不做过多的介绍了，以上是总结的一份登录框测试的思维导图，如果有需要截图保存即可。</p><h3 id="0x03-测试过程"><a href="#0x03-测试过程" class="headerlink" title="0x03 测试过程"></a>0x03 测试过程</h3><p>这里我测试了默认用户名和密码：admin&#x2F;admin，提示：<code>not found user</code>,这说明admin这个用户并不存在。</p><p>之后我测试了登录口的sql注入，但忘记截图了，将brup的POST数据包直接打包成txt文档，使用sqlmap直接跑，参数是：<code>python sqlmap.py -r c:/your/path/1.txt --batch -dbs</code>并没有注入点，所以sql注入失败。</p><p>之后我尝试了多次登录，只是一味的提示：<code>not found user</code>，并不会封禁IP也不会限制输入，所以直接使用user字典去跑，最后跑出来<code>test</code>这个用户，密码同样是test。</p><img src=/jpg/XBOW/4.png><p>登录成功后就是这样的界面了，并没有什么过多的选项和功能。只有一个Logout和一个Orders。</p><p>然后回看自己的burp历史记录</p><img src=/jpg/XBOW/5.png><p>发现账号和密码是明文传输的并且还有<code>user_id</code>的参数，所以我们猜测这个靶机的漏洞会和ID有关，因为之前测试了sql注入并不存在，也并没有其他的功能，所以只有未授权相关漏洞了。</p><p>直接使用burp遍历10000-99999的所有<code>user_id</code>，差不多有9W个，但是跑完并没有结果，之后回到网页中，看到Orders这个选项，点击进去看到一些账单，后面有个超链接按钮。</p><img src=/jpg/XBOW/6.png><img src=/jpg/XBOW/7.png><p>点开超链接按钮可以看到类似于备注的东西和Order ID，尝试拼接目录<code>/orders/300327/receipt</code>拼接完成后可以看到页面变成了oders的详细页面。</p><img src=/jpg/XBOW/8.png><h3 id="0x04-测试结果"><a href="#0x04-测试结果" class="headerlink" title="0x04 测试结果"></a>0x04 测试结果</h3><p>这里我们直接遍历<code>order ID</code>，遍历后三位数字，<code>300000-300999</code></p><img src=/jpg/XBOW/9.png><img src=/jpg/XBOW/10.png><p>开始攻击后，几秒钟就可以跑完这1000条记录，然后按照长度重新排一下顺序，找到那个和其他长度不一致的记录大概率就是flag了。</p><img src=/jpg/XBOW/11.png><h3 id="0x05-靶机总结"><a href="#0x05-靶机总结" class="headerlink" title="0x05 靶机总结"></a>0x05 靶机总结</h3><p>这次靶机练习是找朋友推荐的这个靶场，朋友对这个靶场的评级是很好玩。所以就想来尝试一下，但是安装环境的过程并不是一帆风顺的，开始只想在本地的虚拟机kali上面安装，但是<code>docker-compost up -d</code>拉取镜像的时候mysql总是报错，所以就尝试换一下docker的国内源，换了阿里云、中科大等等国内源，但是报错依然是同一个，最后求助<a href="">风之轻语</a>完成了环境配置。</p><p>总体来说这次的靶机水平不是很高，官方给的评级是：中，相对来说这个评级还是可以的，我自己也被这个靶机误导好多次，很符合实际挖洞的逻辑而不是和一般靶机一样一成不变的思路，推荐有兴趣的话都去试试。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> XBOW </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> XBOW </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>2025京津冀大学生信息安全网络攻防-应急响应任务一</title>
       <link href="/2025/10/16/2025%E4%BA%AC%E6%B4%A5%E5%86%80%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%BD%91%E7%BB%9C%E6%94%BB%E9%98%B2-%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E4%BB%BB%E5%8A%A1%E4%B8%80/"/>
       <url>/2025/10/16/2025%E4%BA%AC%E6%B4%A5%E5%86%80%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%BD%91%E7%BB%9C%E6%94%BB%E9%98%B2-%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E4%BB%BB%E5%8A%A1%E4%B8%80/</url>
@@ -118,6 +143,17 @@
     
     
     <entry>
+      <title>大神博客</title>
+      <link href="/link/index.html"/>
+      <url>/link/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>标签</title>
       <link href="/tags/index.html"/>
       <url>/tags/index.html</url>
@@ -134,17 +170,6 @@
       <url>/music/index.html</url>
       
         <content type="html"><![CDATA[<!-- #<script>console.error("Error: [hexo-tag-aplayer] Meting support is disabled, cannot resolve the meting tags properly.");</script><div class="aplayer" data-id="8492133976" data-server="netease" data-type="playlist"  data-fixed="true" data-theme="#3F51B5"></#div> --><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=795 height=550 src="//music.163.com/outchain/player?type=0&id=6678743774&auto=1&height=430"></iframe>]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>大神博客</title>
-      <link href="/link/index.html"/>
-      <url>/link/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
       
     </entry>
     
