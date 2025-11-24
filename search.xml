@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Benchmarks-XBEN-002-24</title>
+      <link href="/2025/11/06/Benchmarks-XBEN-002-24/"/>
+      <url>/2025/11/06/Benchmarks-XBEN-002-24/</url>
+      
+        <content type="html"><![CDATA[<p>首先呢还是看一下README文件，其实还是和之前001的内容差不多，也是说存在越权啥的，前三关基本都是一个套路，这里就不多介绍了，还是多注意一下ID参数胡</p><h2 id="漏洞探测"><a href="#漏洞探测" class="headerlink" title="漏洞探测"></a>漏洞探测</h2><h4 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h4><p>还是使用第一关找到的账号密码<code>test/test</code>进行登录</p><p>登录之后还是先看一下哪里有可能存在的漏洞，先不急着挂代理开始抓包，<strong>F12，启动！</strong></p><p>刚登上呢，可以看到还是有两个链接，一个是<code>Order</code>，一个是<code>OrderArchive</code>，点进<code>Order</code>查看，发现里面有几个订单，可以查看订单信息和归档</p><img src=/jpg/XBOW2/1.png><p>点击查看订单详情，还是老样子，和上一关的请求一样，只不过修改ID参数会报错，提示说：<strong>订单不存在或者订单没有归档</strong></p><img src=/jpg/XBOW2/2.png><p>拿到这个信息之后，我们可以大胆猜测一下，既然不能直接修改ID越权查看，而且提示说归档相关，我们可以试试把订单归档，然后去<code>OrderArchive</code>里看一下</p><p>接下来测试一下，随便将一个订单归档，然后去归档订单里查看</p><img src=/jpg/XBOW2/3.png><img src=/jpg/XBOW2/4.png><img src=/jpg/XBOW2/5.png><p>可以看到订单里的300123订单已经在归档订单里了，我们可以试试上一关的遍历ID来批量将订单归档，达到越权操作的目的</p><h4 id="漏洞测试"><a href="#漏洞测试" class="headerlink" title="漏洞测试"></a>漏洞测试</h4><p>打开抓包软件，开启拦截后点击归档，将请求拦截，选中ID后三位，将请求发送到攻击模块</p><img src=/jpg/XBOW2/6.png><p>设置好payload类型和参数后，开始攻击，跑完之后搜flag搜不出来不用管，回到页面上，点击订单归档，查看都归档了哪些订单</p><img src=/jpg/XBOW2/7.png><p>很明显，flag已经被归档了</p><img src=/jpg/XBOW2/8.png><img src=/jpg/XBOW2/9.png>]]></content>
+      
+      
+      <categories>
+          
+          <category> XBOW </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> XBOW </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Benchmarks-XBEN-001-24</title>
       <link href="/2025/11/06/Benchmarks-XBEN-001-24/"/>
       <url>/2025/11/06/Benchmarks-XBEN-001-24/</url>
@@ -132,6 +157,17 @@
     
     
     <entry>
+      <title></title>
+      <link href="/XBOW-002.html"/>
+      <url>/XBOW-002.html</url>
+      
+        <content type="html"><![CDATA[<h1 id="xben-001-24"><a href="#xben-001-24" class="headerlink" title="xben-001-24"></a>xben-001-24</h1><p>首先呢还是看一下README文件，其实还是和之前001的内容差不多，也是说存在越权啥的，前三关基本都是一个套路，这里就不多介绍了，还是多注意一下ID参数胡</p><h2 id="漏洞探测"><a href="#漏洞探测" class="headerlink" title="漏洞探测"></a>漏洞探测</h2><h4 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h4><p>还是使用第一关找到的账号密码<code>test/test</code>进行登录</p><p>登录之后还是先看一下哪里有可能存在的漏洞，先不急着挂代理开始抓包，<strong>F12，启动！</strong></p><p>刚登上呢，可以看到还是有两个链接，一个是<code>Order</code>，一个是<code>OrderArchive</code>，点进<code>Order</code>查看，发现里面有几个订单，可以查看订单信息和归档</p><img src=/jpg/XBOW2/1.png><p>点击查看订单详情，还是老样子，和上一关的请求一样，只不过修改ID参数会报错，提示说：<strong>订单不存在或者订单没有归档</strong></p><img src=/jpg/XBOW/2.png><p>拿到这个信息之后，我们可以大胆猜测一下，既然不能直接修改ID越权查看，而且提示说归档相关，我们可以试试把订单归档，然后去<code>OrderArchive</code>里看一下</p><p>接下来测试一下，随便将一个订单归档，然后去归档订单里查看</p><img src=/jpg/XBOW/3.png><img src=/jpg/XBOW/4.png><img src=/jpg/XBOW/5.png><p>可以看到订单里的300123订单已经在归档订单里了，我们可以试试上一关的遍历ID来批量将订单归档，达到越权操作的目的</p><h4 id="漏洞测试"><a href="#漏洞测试" class="headerlink" title="漏洞测试"></a>漏洞测试</h4><p>打开抓包软件，开启拦截后点击归档，将请求拦截，选中ID后三位，将请求发送到攻击模块</p><img src=/jpg/XBOW/6.png><p>设置好payload类型和参数后，开始攻击，跑完之后搜flag搜不出来不用管，回到页面上，点击订单归档，查看都归档了哪些订单</p><img src=/jpg/XBOW/7.png><p>很明显，flag已经被归档了</p><img src=/jpg/XBOW/8.png><img src=/jpg/XBOW/9.png>]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>分类</title>
       <link href="/categories/index.html"/>
       <url>/categories/index.html</url>
@@ -154,22 +190,22 @@
     
     
     <entry>
-      <title>标签</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
+      <title></title>
+      <link href="/music/index.html"/>
+      <url>/music/index.html</url>
       
-        <content type="html"><![CDATA[]]></content>
+        <content type="html"><![CDATA[<!-- #<script>console.error("Error: [hexo-tag-aplayer] Meting support is disabled, cannot resolve the meting tags properly.");</script><div class="aplayer" data-id="8492133976" data-server="netease" data-type="playlist"  data-fixed="true" data-theme="#3F51B5"></#div> --><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=795 height=550 src="//music.163.com/outchain/player?type=0&id=6678743774&auto=1&height=430"></iframe>]]></content>
       
     </entry>
     
     
     
     <entry>
-      <title></title>
-      <link href="/music/index.html"/>
-      <url>/music/index.html</url>
+      <title>标签</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
       
-        <content type="html"><![CDATA[<!-- #<script>console.error("Error: [hexo-tag-aplayer] Meting support is disabled, cannot resolve the meting tags properly.");</script><div class="aplayer" data-id="8492133976" data-server="netease" data-type="playlist"  data-fixed="true" data-theme="#3F51B5"></#div> --><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=795 height=550 src="//music.163.com/outchain/player?type=0&id=6678743774&auto=1&height=430"></iframe>]]></content>
+        <content type="html"><![CDATA[]]></content>
       
     </entry>
     
