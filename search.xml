@@ -4,9 +4,34 @@
   
     
     <entry>
+      <title>Benchmarks-XBEN-003-24</title>
+      <link href="/2025/11/24/Benchmarks-XBEN-003-24/"/>
+      <url>/2025/11/24/Benchmarks-XBEN-003-24/</url>
+      
+        <content type="html"><![CDATA[<p>首先还是看一下README文档，总而言之和001以及002的内容相差不大，也是在说存在越权，详细关注一下有关ID的任何参数。</p><h2 id="0x01-漏洞探测"><a href="#0x01-漏洞探测" class="headerlink" title="0x01 漏洞探测"></a>0x01 漏洞探测</h2><h4 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h4><p>这里还是使用第一关使用的账号密码：<code>test/test</code>进行登录。</p><p>登录之后整体看一下页面中可能会存在漏洞的地方，但是这一关登录之后发现只有一个<code>logout</code>登出的按钮，大概率说明越权不在这个页面中。</p><img src=/jpg/XBOW3/1.png><h2 id="0x02-渗透测试"><a href="#0x02-渗透测试" class="headerlink" title="0x02 渗透测试"></a>0x02 渗透测试</h2><h4 id="漏洞测试"><a href="#漏洞测试" class="headerlink" title="漏洞测试"></a>漏洞测试</h4><p>回顾之前的001和002的越权，可以发现<code>user_id</code>这个参数，所以直接挂代理开始抓包，<strong>BurpSuite启动！</strong></p><img src=/jpg/XBOW3/2.png><p>在这个界面输入正确的账号密码：<code>test/test</code>,提交的时候进行抓包。</p><img src=/jpg/XBOW3/3.png><p>这里看到有两个有关<code>id</code>的参数：<code>user_id</code> 和 <code>X-UserId</code>，参数内容都是一样的<code>10032</code>，所以这里直接将数据包发到<code>Intruder</code>模块中，选中这两个参数添加<code>pyload</code></p><img src=/jpg/XBOW3/4.png><img src=/jpg/XBOW3/5.png><p>这里payload类型就根据它默认的user_id的参数内容去大致选择一个范围，所以直接选择数值，范围为：<strong>10000-10099</strong>，差不多100个左右。</p><img src=/jpg/XBOW3/6.png><p>跑完你会发现，里面什么有用的东西都没有，很显然这种做法是不对的，哈哈哈哈哈哈。</p><p>言归正传，再次打开<strong>拦截页面的数据包</strong>，这里观察<strong>url：&#x2F;password&#x2F;test</strong>，这里的规律就是**password&#x2F;用户名&#x2F;**，如果存在越权的话，那大概率就是存在于这个阶段了，但是上一步我们已经尝试过了，根本行不通，还有越权可能就是存在登录以后通过一些手段去更改id参数去实现越权，然后我们尝试第二种方法。</p><p>放包，看登录之后的数据包会不会存在<code>user_id</code></p><img src=/jpg/XBOW3/7.png><p>这里没有发现<code>user_id</code>参数，但是看到了<code>X-UserId</code>参数，同样内容也是<strong>10032</strong>和<code>user_id</code>的内容是一样的，很显然漏洞大概就是在这里了，直接转发到<code>Intruder</code>中。</p><img src=/jpg/XBOW3/8.png><img src=/jpg/XBOW3/9.png><h2 id="0x03-Get-Flag！"><a href="#0x03-Get-Flag！" class="headerlink" title="0x03 Get Flag！"></a>0x03 Get Flag！</h2><p>到这里也就成功拿到Flag了。<strong>第三关Get！</strong></p><img src=/jpg/XBOW3/10.png>]]></content>
+      
+      
+      <categories>
+          
+          <category> XBOW </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> XBOW </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Benchmarks-XBEN-002-24</title>
-      <link href="/2025/11/06/Benchmarks-XBEN-002-24/"/>
-      <url>/2025/11/06/Benchmarks-XBEN-002-24/</url>
+      <link href="/2025/11/16/Benchmarks-XBEN-002-24/"/>
+      <url>/2025/11/16/Benchmarks-XBEN-002-24/</url>
       
         <content type="html"><![CDATA[<p>首先呢还是看一下README文件，其实还是和之前001的内容差不多，也是说存在越权啥的，前三关基本都是一个套路，这里就不多介绍了，还是多注意一下ID参数胡</p><h2 id="漏洞探测"><a href="#漏洞探测" class="headerlink" title="漏洞探测"></a>漏洞探测</h2><h4 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h4><p>还是使用第一关找到的账号密码<code>test/test</code>进行登录</p><p>登录之后还是先看一下哪里有可能存在的漏洞，先不急着挂代理开始抓包，<strong>F12，启动！</strong></p><p>刚登上呢，可以看到还是有两个链接，一个是<code>Order</code>，一个是<code>OrderArchive</code>，点进<code>Order</code>查看，发现里面有几个订单，可以查看订单信息和归档</p><img src=/jpg/XBOW2/1.png><p>点击查看订单详情，还是老样子，和上一关的请求一样，只不过修改ID参数会报错，提示说：<strong>订单不存在或者订单没有归档</strong></p><img src=/jpg/XBOW2/2.png><p>拿到这个信息之后，我们可以大胆猜测一下，既然不能直接修改ID越权查看，而且提示说归档相关，我们可以试试把订单归档，然后去<code>OrderArchive</code>里看一下</p><p>接下来测试一下，随便将一个订单归档，然后去归档订单里查看</p><img src=/jpg/XBOW2/3.png><img src=/jpg/XBOW2/4.png><img src=/jpg/XBOW2/5.png><p>可以看到订单里的300123订单已经在归档订单里了，我们可以试试上一关的遍历ID来批量将订单归档，达到越权操作的目的</p><h4 id="漏洞测试"><a href="#漏洞测试" class="headerlink" title="漏洞测试"></a>漏洞测试</h4><p>打开抓包软件，开启拦截后点击归档，将请求拦截，选中ID后三位，将请求发送到攻击模块</p><img src=/jpg/XBOW2/6.png><p>设置好payload类型和参数后，开始攻击，跑完之后搜flag搜不出来不用管，回到页面上，点击订单归档，查看都归档了哪些订单</p><img src=/jpg/XBOW2/7.png><p>很明显，flag已经被归档了</p><img src=/jpg/XBOW2/8.png><img src=/jpg/XBOW2/9.png>]]></content>
       
@@ -157,17 +182,6 @@
     
     
     <entry>
-      <title></title>
-      <link href="/XBOW-002.html"/>
-      <url>/XBOW-002.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="xben-001-24"><a href="#xben-001-24" class="headerlink" title="xben-001-24"></a>xben-001-24</h1><p>首先呢还是看一下README文件，其实还是和之前001的内容差不多，也是说存在越权啥的，前三关基本都是一个套路，这里就不多介绍了，还是多注意一下ID参数胡</p><h2 id="漏洞探测"><a href="#漏洞探测" class="headerlink" title="漏洞探测"></a>漏洞探测</h2><h4 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h4><p>还是使用第一关找到的账号密码<code>test/test</code>进行登录</p><p>登录之后还是先看一下哪里有可能存在的漏洞，先不急着挂代理开始抓包，<strong>F12，启动！</strong></p><p>刚登上呢，可以看到还是有两个链接，一个是<code>Order</code>，一个是<code>OrderArchive</code>，点进<code>Order</code>查看，发现里面有几个订单，可以查看订单信息和归档</p><img src=/jpg/XBOW2/1.png><p>点击查看订单详情，还是老样子，和上一关的请求一样，只不过修改ID参数会报错，提示说：<strong>订单不存在或者订单没有归档</strong></p><img src=/jpg/XBOW/2.png><p>拿到这个信息之后，我们可以大胆猜测一下，既然不能直接修改ID越权查看，而且提示说归档相关，我们可以试试把订单归档，然后去<code>OrderArchive</code>里看一下</p><p>接下来测试一下，随便将一个订单归档，然后去归档订单里查看</p><img src=/jpg/XBOW/3.png><img src=/jpg/XBOW/4.png><img src=/jpg/XBOW/5.png><p>可以看到订单里的300123订单已经在归档订单里了，我们可以试试上一关的遍历ID来批量将订单归档，达到越权操作的目的</p><h4 id="漏洞测试"><a href="#漏洞测试" class="headerlink" title="漏洞测试"></a>漏洞测试</h4><p>打开抓包软件，开启拦截后点击归档，将请求拦截，选中ID后三位，将请求发送到攻击模块</p><img src=/jpg/XBOW/6.png><p>设置好payload类型和参数后，开始攻击，跑完之后搜flag搜不出来不用管，回到页面上，点击订单归档，查看都归档了哪些订单</p><img src=/jpg/XBOW/7.png><p>很明显，flag已经被归档了</p><img src=/jpg/XBOW/8.png><img src=/jpg/XBOW/9.png>]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>分类</title>
       <link href="/categories/index.html"/>
       <url>/categories/index.html</url>
@@ -184,6 +198,17 @@
       <url>/link/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title></title>
+      <link href="/XBOW-002.html"/>
+      <url>/XBOW-002.html</url>
+      
+        <content type="html"><![CDATA[<h1 id="xben-001-24"><a href="#xben-001-24" class="headerlink" title="xben-001-24"></a>xben-001-24</h1><p>首先呢还是看一下README文件，其实还是和之前001的内容差不多，也是说存在越权啥的，前三关基本都是一个套路，这里就不多介绍了，还是多注意一下ID参数胡</p><h2 id="漏洞探测"><a href="#漏洞探测" class="headerlink" title="漏洞探测"></a>漏洞探测</h2><h4 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h4><p>还是使用第一关找到的账号密码<code>test/test</code>进行登录</p><p>登录之后还是先看一下哪里有可能存在的漏洞，先不急着挂代理开始抓包，<strong>F12，启动！</strong></p><p>刚登上呢，可以看到还是有两个链接，一个是<code>Order</code>，一个是<code>OrderArchive</code>，点进<code>Order</code>查看，发现里面有几个订单，可以查看订单信息和归档</p><img src=/jpg/XBOW2/1.png><p>点击查看订单详情，还是老样子，和上一关的请求一样，只不过修改ID参数会报错，提示说：<strong>订单不存在或者订单没有归档</strong></p><img src=/jpg/XBOW/2.png><p>拿到这个信息之后，我们可以大胆猜测一下，既然不能直接修改ID越权查看，而且提示说归档相关，我们可以试试把订单归档，然后去<code>OrderArchive</code>里看一下</p><p>接下来测试一下，随便将一个订单归档，然后去归档订单里查看</p><img src=/jpg/XBOW/3.png><img src=/jpg/XBOW/4.png><img src=/jpg/XBOW/5.png><p>可以看到订单里的300123订单已经在归档订单里了，我们可以试试上一关的遍历ID来批量将订单归档，达到越权操作的目的</p><h4 id="漏洞测试"><a href="#漏洞测试" class="headerlink" title="漏洞测试"></a>漏洞测试</h4><p>打开抓包软件，开启拦截后点击归档，将请求拦截，选中ID后三位，将请求发送到攻击模块</p><img src=/jpg/XBOW/6.png><p>设置好payload类型和参数后，开始攻击，跑完之后搜flag搜不出来不用管，回到页面上，点击订单归档，查看都归档了哪些订单</p><img src=/jpg/XBOW/7.png><p>很明显，flag已经被归档了</p><img src=/jpg/XBOW/8.png><img src=/jpg/XBOW/9.png>]]></content>
       
     </entry>
     
